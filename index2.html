@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PBÉ Devis">
+<title>PBÉ Devis</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --g:#4CD444;--gl:#9BF482;--dark:#333;
+  --bg:#f2f3f0;--card:#fff;--border:#e2e5de;
+  --text:#1a1a1a;--muted:#6b7280;--success:#27500A;--danger:#C0392B;
+}
+@media(prefers-color-scheme:dark){
+  :root{--bg:#111;--card:#1c1c1e;--border:#2c2c2e;--text:#f2f2f7;--muted:#8e8e93;--success:#9BF482;--danger:#FF6B6B}
+}
+html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',sans-serif;font-size:16px}
+
+/* TOPBAR */
+.topbar{background:var(--dark);padding:52px 16px 14px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100}
+.logo{width:40px;height:40px;border-radius:50%;background:var(--dark);border:2.5px solid var(--g);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0}
+.logo span:first-child{font-size:6px;font-weight:800;font-style:italic;color:#fff;line-height:1.1}
+.logo span:last-child{font-size:8px;font-weight:900;color:var(--g);line-height:1.1}
+.topbar-text h1{font-size:17px;font-weight:700;color:#fff}
+.topbar-text p{font-size:12px;color:rgba(255,255,255,.5)}
+.topbar-badge{margin-left:auto;font-size:11px;padding:3px 9px;border-radius:20px;background:rgba(76,212,68,.2);color:var(--gl);font-weight:600;border:1px solid rgba(76,212,68,.35);white-space:nowrap}
+
+/* SECTIONS */
+.page{padding:12px 12px 100px}
+.card{background:var(--card);border-radius:16px;margin-bottom:12px;overflow:hidden;border:1px solid var(--border)}
+.card-head{display:flex;align-items:center;gap:10px;padding:14px 16px 0}
+.card-icon{width:30px;height:30px;border-radius:8px;background:rgba(76,212,68,.12);display:flex;align-items:center;justify-content:center;color:var(--g);font-size:16px;flex-shrink:0}
+.card-head h2{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text)}
+.card-body{padding:12px 16px 16px}
+
+/* FIELDS */
+.field{margin-bottom:10px}
+.field:last-child{margin-bottom:0}
+.field label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);display:block;margin-bottom:5px}
+.field input,.field select{
+  width:100%;height:44px;padding:0 12px;
+  border:1.5px solid var(--border);border-radius:10px;
+  background:var(--bg);color:var(--text);
+  font-size:16px;font-family:inherit;
+  -webkit-appearance:none;appearance:none;
+}
+.field input:focus,.field select:focus{outline:none;border-color:var(--g)}
+.field input[readonly]{background:rgba(76,212,68,.06);border-color:rgba(76,212,68,.3);color:var(--text);font-weight:600}
+.field input[type=date]{color:var(--text)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+
+/* LIGNES */
+.ligne-item{background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:10px 12px;margin-bottom:8px}
+.ligne-top{display:flex;gap:6px;align-items:center;margin-bottom:6px}
+.ligne-top input{flex:1;height:40px;padding:0 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--card);color:var(--text);font-size:14px;font-family:inherit}
+.ligne-top input:focus{outline:none;border-color:var(--g)}
+.ligne-ref{width:100%;height:34px;padding:0 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--card);color:var(--muted);font-size:13px;font-family:inherit;margin-bottom:6px}
+.ligne-ref:focus{outline:none;border-color:var(--g)}
+.ligne-nums{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px}
+.ligne-nums .nfield label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;display:block;margin-bottom:3px}
+.ligne-nums .nfield input{width:100%;height:38px;padding:0 8px;border:1.5px solid var(--border);border-radius:8px;background:var(--card);color:var(--text);font-size:14px;text-align:right;font-family:inherit}
+.ligne-nums .nfield input:focus{outline:none;border-color:var(--g)}
+.ligne-nums .nfield input[readonly]{background:rgba(76,212,68,.08);border-color:rgba(76,212,68,.3);font-weight:700;color:var(--success)}
+.bdel{width:36px;height:40px;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;cursor:pointer}
+.bdel:active{background:#fee;border-color:#fbb;color:var(--danger)}
+
+/* PRESETS */
+.presets{display:flex;flex-wrap:wrap;gap:6px;padding:0 16px 16px}
+.preset-btn{height:34px;padding:0 14px;border:1.5px solid var(--border);border-radius:20px;background:var(--card);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.preset-btn.main{background:var(--g);border-color:var(--g);color:#173404}
+.preset-btn:active{opacity:.7}
+
+/* TOTAUX */
+.totaux{padding:12px 16px;border-top:1px solid var(--border)}
+.tot-row{display:flex;justify-content:space-between;padding:3px 0;font-size:14px}
+.tot-row .lbl{color:var(--muted)}
+.tot-main{display:flex;justify-content:space-between;padding:10px 0 0;margin-top:6px;border-top:1.5px solid var(--border);font-size:18px;font-weight:700}
+
+/* KPI DELTA */
+.kpi-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+.kpi{border-radius:12px;padding:12px;text-align:center}
+.kpi .kl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px}
+.kpi .kv{font-size:18px;font-weight:800;line-height:1.1}
+.kpi .ks{font-size:11px;margin-top:3px}
+.kpi.blue{background:#EEF4FB;border:1px solid #B5D4F4}
+.kpi.blue .kl{color:#185FA5}.kpi.blue .kv{color:#185FA5}.kpi.blue .ks{color:#378ADD}
+.kpi.green{background:#EAF3DE;border:1px solid #C0DD97}
+.kpi.green .kl{color:#3B6D11}.kpi.green .kv{color:#3B6D11}.kpi.green .ks{color:#639922}
+.kpi.pos{background:#EAF3DE;border:1px solid #639922}
+.kpi.pos .kl{color:#27500A}.kpi.pos .kv{color:#27500A}.kpi.pos .ks{color:#3B6D11}
+.kpi.neg{background:#FCEBEB;border:1px solid #F09595}
+.kpi.neg .kl{color:#A32D2D}.kpi.neg .kv{color:var(--danger)}.kpi.neg .ks{color:#E24B4A}
+@media(prefers-color-scheme:dark){
+  .kpi.blue{background:#0c2a45;border-color:#185FA5}.kpi.blue .kl,.kpi.blue .kv{color:#85B7EB}.kpi.blue .ks{color:#378ADD}
+  .kpi.green{background:#173404;border-color:#3B6D11}.kpi.green .kl,.kpi.green .kv{color:#9BF482}.kpi.green .ks{color:#C0DD97}
+  .kpi.pos{background:#173404;border-color:#639922}.kpi.pos .kl,.kpi.pos .kv,.kpi.pos .ks{color:#9BF482}
+  .kpi.neg{background:#3a0f0f;border-color:#A32D2D}.kpi.neg .kl,.kpi.neg .kv,.kpi.neg .ks{color:#FF6B6B}
+}
+
+/* PROGRESS */
+.pb-wrap{margin-bottom:14px}
+.pb-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:4px}
+.pb-track{height:8px;background:var(--border);border-radius:20px;overflow:hidden}
+.pb-fill{height:100%;background:var(--g);border-radius:20px;transition:width .35s}
+
+/* DETAIL TABLE */
+.dtable{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed}
+.dtable th{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:var(--muted);padding:6px 6px;border-bottom:1.5px solid var(--border);text-align:right}
+.dtable th:first-child{text-align:left}
+.dtable td{padding:8px 6px;border-bottom:1px solid var(--border);text-align:right;font-size:12px}
+.dtable td:first-child{text-align:left;color:var(--muted)}
+.dtable tr:last-child td{border-bottom:none;font-weight:700;color:var(--text)}
+.dpos{color:var(--success);font-weight:700}
+.dneg{color:var(--danger);font-weight:700}
+
+/* PRINT BTN */
+.print-btn{
+  width:calc(100% - 24px);margin:0 12px 20px;
+  height:52px;border:none;border-radius:14px;
+  background:var(--g);color:#173404;
+  font-size:17px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  cursor:pointer;-webkit-appearance:none;
+}
+.print-btn:active{opacity:.8}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <img src="https://raw.githubusercontent.com/PBEPRADES/PRAE-BRISE-ECO-PRADES/main/télécharger.png" alt="Logo Pare-Brise Éco" style="width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0"/>
+  <div class="topbar-text">
+    <h1>Générateur de devis</h1>
+    <p>Prades · #194</p>
+  </div>
+  <span class="topbar-badge">SIDEXA</span>
+</div>
+
+<div class="page">
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon">&#128196;</div>
+      <h2>Dossier</h2>
+    </div>
+    <div class="card-body">
+      <div class="g2">
+        <div class="field"><label>N° devis</label><input id="num_devis" value="DE2026-0042"/></div>
+        <div class="field"><label>N° dossier MDA</label><input id="num_mda" placeholder="#9700"/></div>
+      </div>
+      <div class="g2" style="margin-top:8px">
+        <div class="field"><label>Date émission</label><input type="date" id="date_em"/></div>
+        <div class="field"><label>Date échéance</label><input type="date" id="date_ec"/></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon">&#128663;</div>
+      <h2>Véhicule</h2>
+    </div>
+    <div class="card-body">
+      <div class="g2">
+        <div class="field"><label>Immatriculation</label><input id="immat" placeholder="AB-123-CD" style="text-transform:uppercase"/></div>
+        <div class="field"><label>Marque</label><input id="marque" placeholder="PEUGEOT"/></div>
+      </div>
+      <div class="field" style="margin-top:8px"><label>Modèle</label><input id="modele" placeholder="308 depuis 10.13"/></div>
+      <div class="field" style="margin-top:8px"><label>N° de série (VIN)</label><input id="vin" placeholder="VF3..."/></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon">&#128100;</div>
+      <h2>Client</h2>
+    </div>
+    <div class="card-body">
+      <div class="field"><label>Nom complet</label><input id="cnom" placeholder="MR JEAN DUPONT" style="text-transform:uppercase"/></div>
+      <div class="field" style="margin-top:8px"><label>Adresse</label><input id="cadr" placeholder="12 RUE DE LA PAIX"/></div>
+      <div class="g2" style="margin-top:8px">
+        <div class="field"><label>Code postal</label><input id="ccp" placeholder="66000" type="tel"/></div>
+        <div class="field"><label>Ville</label><input id="cvil" placeholder="PERPIGNAN"/></div>
+      </div>
+      <div class="g2" style="margin-top:8px">
+        <div class="field"><label>Téléphone</label><input id="ctel" placeholder="06 XX XX XX XX" type="tel"/></div>
+        <div class="field"><label>Email</label><input id="ceml" placeholder="client@email.fr" type="email"/></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon">&#128221;</div>
+      <h2>Lignes du devis</h2>
+    </div>
+    <div class="card-body" id="lignes" style="padding-bottom:0"></div>
+    <div class="presets">
+      <button class="preset-btn main" onclick="al()">+ Ligne</button>
+      <button class="preset-btn" onclick="ap('pb')">Pare-brise</button>
+      <button class="preset-btn" onclick="ap('kit')">Kit collage</button>
+      <button class="preset-btn" onclick="ap('mo')">Main d'œuvre</button>
+      <button class="preset-btn" onclick="ap('adas')">ADAS</button>
+      <button class="preset-btn" onclick="ap('rec')">Recyclage</button>
+    </div>
+    <div class="totaux" id="totaux"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon">&#128722;</div>
+      <h2>Mes coûts d'achat (HT)</h2>
+    </div>
+    <div class="card-body">
+      <div class="g2">
+        <div class="field"><label>Vitrage fournisseur</label><input id="c_verre" placeholder="160.00" type="decimal" inputmode="decimal" oninput="calc()"/></div>
+        <div class="field"><label>Kit collage réel</label><input id="c_kit" placeholder="35.00" inputmode="decimal" oninput="calc()"/></div>
+        <div class="field"><label>Pièces annexes</label><input id="c_pieces" placeholder="0.00" inputmode="decimal" oninput="calc()"/></div>
+        <div class="field"><label>Main d'œuvre</label><input id="c_mo" placeholder="0.00" inputmode="decimal" oninput="calc()"/></div>
+        <div class="field"><label>ADAS / sous-trait.</label><input id="c_adas" placeholder="0.00" inputmode="decimal" oninput="calc()"/></div>
+        <div class="field"><label>Rachat client (€)</label><input id="c_rachat" placeholder="250.00" inputmode="decimal" oninput="calc()"/></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon">&#128200;</div>
+      <h2>Achat vs Assurance</h2>
+    </div>
+    <div class="card-body">
+      <div class="kpi-row">
+        <div class="kpi blue">
+          <div class="kl">Achat</div>
+          <div class="kv" id="kpi_achat">—</div>
+          <div class="ks">HT</div>
+        </div>
+        <div class="kpi green">
+          <div class="kl">Facturé</div>
+          <div class="kv" id="kpi_assur">—</div>
+          <div class="ks">HT devis</div>
+        </div>
+        <div class="kpi pos" id="kpi_card">
+          <div class="kl">Marge</div>
+          <div class="kv" id="kpi_delta">—</div>
+          <div class="ks" id="kpi_taux">—</div>
+        </div>
+      </div>
+      <div class="pb-wrap">
+        <div class="pb-labels">
+          <span>Achat</span>
+          <span id="pb_mid"></span>
+          <span>Facturé</span>
+        </div>
+        <div class="pb-track"><div class="pb-fill" id="pb_fill" style="width:0%"></div></div>
+      </div>
+      <table class="dtable">
+        <thead><tr>
+          <th style="text-align:left;width:32%">Poste</th>
+          <th style="width:22%">Achat</th>
+          <th style="width:22%">Facturé</th>
+          <th style="width:24%">Delta</th>
+        </tr></thead>
+        <tbody id="dtbody">
+          <tr><td colspan="4" style="text-align:center;color:var(--muted);padding:14px 0;font-size:12px">Remplissez le devis ci-dessus</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<button class="print-btn" onclick="apercu()">&#128438; Générer le devis PDF</button>
+
+<script>
+const SOC={n1:"Vitrage du Conflent",n2:"Pare-brise eco Prades",adr:"12 avenue pla de dalt",cp:"66500 Prades",tel:"0770243773",email:"prades@parebrise-eco.fr",siret:"10220554900011",tva:"FR47102205549"};
+const OPE="#194";
+let lds=[],cpt=0;
+
+function today(o=0){const d=new Date();d.setDate(d.getDate()+o);return d.toISOString().slice(0,10);}
+document.getElementById('date_em').value=today();
+document.getElementById('date_ec').value=today(10);
+
+function gv(id){return parseFloat(document.getElementById(id)?.value)||0;}
+function fmt(n){return n.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})+'\u00a0€';}
+
+function al(desc='',ref='',pu='',qty='1',rem='0',tva='20'){
+  const id=++cpt;lds.push(id);
+  const d=document.createElement('div');
+  d.className='ligne-item';d.id='lg-'+id;
+  d.innerHTML=`
+    <div class="ligne-top">
+      <input placeholder="Description" id="d-${id}" value="${desc}" oninput="calc()"/>
+      <button class="bdel" onclick="dl(${id})" aria-label="Supprimer">&#10005;</button>
+    </div>
+    <input class="ligne-ref" placeholder="Référence" id="r-${id}" value="${ref}" oninput="calc()"/>
+    <div class="ligne-nums">
+      <div class="nfield"><label>P.U. HT</label><input type="number" id="p-${id}" value="${pu}" placeholder="0.00" step="0.01" inputmode="decimal" oninput="calc()"/></div>
+      <div class="nfield"><label>Qté</label><input type="number" id="q-${id}" value="${qty}" placeholder="1" step="0.1" inputmode="decimal" oninput="calc()"/></div>
+      <div class="nfield"><label>TVA %</label><input type="number" id="t-${id}" value="${tva}" placeholder="20" oninput="calc()"/></div>
+      <div class="nfield"><label>Mnt HT</label><input readonly id="m-${id}" value=""/></div>
+    </div>`;
+  document.getElementById('lignes').appendChild(d);
+  calc();
+  setTimeout(()=>d.querySelector('input').focus(),50);
+}
+
+function ap(type){
+  if(type==='pb')al('PARE-BRISE','','',1,0,20);
+  else if(type==='kit')al('KIT COLLAGE P.BRISE','93165025','58.26',1,0,20);
+  else if(type==='mo')al('PARE-BRISE REMPLACER','','83.00',2.7,0,20);
+  else if(type==='adas')al('CALIBRAGE CAMERA ADAS','','145.74',1,0,20);
+  else if(type==='rec')al('RECYCLAGE DES DECHETS','','7.90',1,0,20);
+}
+
+function dl(id){const i=lds.indexOf(id);if(i>-1)lds.splice(i,1);document.getElementById('lg-'+id)?.remove();calc();}
+
+function getLignes(){
+  return lds.map(id=>{
+    const pu=parseFloat(document.getElementById('p-'+id)?.value)||0;
+    const qty=parseFloat(document.getElementById('q-'+id)?.value)||0;
+    const rem=parseFloat(document.getElementById('re-'+id)?.value)||0;
+    const tva=parseFloat(document.getElementById('t-'+id)?.value)||20;
+    const mht=parseFloat((pu*qty*(1-rem/100)).toFixed(2));
+    return{desc:document.getElementById('d-'+id)?.value||'',ref:document.getElementById('r-'+id)?.value||'',pu,qty,rem,tva,mht};
+  });
+}
+
+function calc(){
+  const ls=getLignes();
+  let tHT=0,tTVA=0;
+  ls.forEach((l,i)=>{
+    tHT+=l.mht;
+    tTVA+=parseFloat((l.mht*l.tva/100).toFixed(2));
+    const mel=document.getElementById('m-'+lds[i]);
+    if(mel)mel.value=l.mht>0?l.mht.toFixed(2):'';
+  });
+  tHT=parseFloat(tHT.toFixed(2));tTVA=parseFloat(tTVA.toFixed(2));
+  const tTTC=parseFloat((tHT+tTVA).toFixed(2));
+  document.getElementById('totaux').innerHTML=`
+    <div class="tot-row"><span class="lbl">Total HT</span><span>${fmt(tHT)}</span></div>
+    <div class="tot-row"><span class="lbl">TVA (20%)</span><span>${fmt(tTVA)}</span></div>
+    <div class="tot-main"><span>Total TTC</span><span>${fmt(tTTC)}</span></div>`;
+
+  const cV=gv('c_verre'),cK=gv('c_kit'),cP=gv('c_pieces'),cM=gv('c_mo'),cA=gv('c_adas'),cR=gv('c_rachat');
+  const totA=parseFloat((cV+cK+cP+cM+cA+cR).toFixed(2));
+  const delta=parseFloat((tHT-totA).toFixed(2));
+  const taux=tHT>0?Math.round(delta/tHT*100):0;
+
+  document.getElementById('kpi_achat').textContent=fmt(totA);
+  document.getElementById('kpi_assur').textContent=fmt(tHT);
+  document.getElementById('kpi_delta').textContent=(delta>=0?'+':'')+fmt(delta);
+  document.getElementById('kpi_taux').textContent='taux '+taux+'%';
+  document.getElementById('kpi_card').className='kpi '+(delta>=0?'pos':'neg');
+
+  const maxV=Math.max(totA,tHT,0.01);
+  document.getElementById('pb_fill').style.width=Math.min(100,Math.round(totA/maxV*100))+'%';
+  document.getElementById('pb_mid').textContent=fmt(totA);
+
+  const postes=[
+    {label:'Vitrage',achat:cV,f:ls.find(l=>l.desc.toUpperCase().includes('PARE-BRISE')&&!l.desc.toUpperCase().includes('DEP')&&!l.desc.toUpperCase().includes('REMP'))?.mht??null},
+    {label:'Kit collage',achat:cK,f:ls.find(l=>l.desc.toUpperCase().includes('KIT'))?.mht??null},
+    {label:'Pièces',achat:cP,f:null},
+    {label:'Main d\'œuvre',achat:cM,f:ls.find(l=>l.desc.toUpperCase().includes('REMPLACER')||l.desc.toUpperCase().includes('DEP/REPOSER'))?.mht??null},
+    {label:'ADAS',achat:cA,f:ls.find(l=>l.desc.toUpperCase().includes('ADAS'))?.mht??null},
+    {label:'Rachat',achat:cR,f:null},
+  ].filter(r=>r.achat>0||r.f!=null);
+
+  let tbody='';
+  postes.forEach(r=>{
+    const d=r.f!=null?parseFloat((r.f-r.achat).toFixed(2)):null;
+    tbody+=`<tr>
+      <td>${r.label}</td>
+      <td>${fmt(r.achat)}</td>
+      <td>${r.f!=null?fmt(r.f):'—'}</td>
+      <td class="${d!=null?(d>=0?'dpos':'dneg'):''}">${d!=null?(d>=0?'+':'')+fmt(d):'—'}</td>
+    </tr>`;
+  });
+  const totD=parseFloat((tHT-totA).toFixed(2));
+  tbody+=`<tr><td>Total</td><td>${fmt(totA)}</td><td>${fmt(tHT)}</td><td class="${totD>=0?'dpos':'dneg'}">${(totD>=0?'+':'')+fmt(totD)}</td></tr>`;
+  document.getElementById('dtbody').innerHTML=tbody||`<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:14px 0;font-size:12px">Remplissez les champs</td></tr>`;
+}
+
+function apercu(){
+  const ls=getLignes();
+  let tHT=0,tTVA=0;
+  ls.forEach(l=>{tHT+=l.mht;tTVA+=parseFloat((l.mht*l.tva/100).toFixed(2));});
+  tHT=parseFloat(tHT.toFixed(2));tTVA=parseFloat(tTVA.toFixed(2));
+  const tTTC=parseFloat((tHT+tTVA).toFixed(2));
+  const fd=v=>v?v.split('-').reverse().join('/'):'—';
+  const lsHTML=ls.map(l=>`<tr>
+    <td style="padding:10px 8px 4px;border-top:1px solid #eee"><strong>${l.desc}</strong><br><span style="font-size:11px;color:#888">${l.ref}</span></td>
+    <td style="padding:10px 8px;text-align:right;border-top:1px solid #eee">${l.pu.toFixed(2)}€</td>
+    <td style="padding:10px 8px;text-align:center;border-top:1px solid #eee">${l.qty}</td>
+    <td style="padding:10px 8px;text-align:right;border-top:1px solid #eee">${l.tva}%</td>
+    <td style="padding:10px 8px;text-align:right;border-top:1px solid #eee;font-weight:700">${l.mht.toFixed(2)}€</td>
+  </tr>`).join('');
+  const html=`<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Devis ${document.getElementById('num_devis').value}</title>
+  <style>body{font-family:Arial,sans-serif;color:#222;margin:0;padding:20px;font-size:12px}h1{font-size:20px;font-weight:700}.top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}.logo{width:44px;height:44px;border-radius:50%;background:#333;border:2px solid #3DD343;display:flex;flex-direction:column;align-items:center;justify-content:center}.logo span:first-child{font-size:6px;font-weight:800;font-style:italic;color:#fff}.logo span:last-child{font-size:8px;font-weight:900;color:#3DD343}.meta{display:grid;grid-template-columns:auto 1fr;gap:3px 20px;font-size:11px;margin-bottom:16px}.mk{font-weight:700;color:#555}.addrs{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0;font-size:11px}.albl{font-weight:700;margin-bottom:4px}table{width:100%;border-collapse:collapse}thead{border-bottom:2px solid #222}th{font-size:10px;font-weight:700;text-transform:uppercase;padding:6px 8px;text-align:right}th:first-child{text-align:left}.foot{display:flex;justify-content:flex-end;margin-top:20px}.ft{width:220px}.ft td{padding:4px 6px;font-size:12px}.ttc{border-top:2px solid #222;font-weight:700;font-size:14px}@media print{body{padding:10px}}</style>
+  </head><body>
+  <div class="top"><div><h1>DEVIS</h1><div style="font-size:11px;color:#888">Vitrage du Conflent · Pare-brise eco Prades</div></div>
+  <div class="logo"><span>PARE-BRISE</span><span>ÉCO</span></div></div>
+  <div class="meta">
+    <span class="mk">N° devis</span><span>${document.getElementById('num_devis').value}</span>
+    <span class="mk">Date émission</span><span>${fd(document.getElementById('date_em').value)}</span>
+    <span class="mk">Date échéance</span><span>${fd(document.getElementById('date_ec').value)}</span>
+    <span class="mk">Dossier MDA</span><span>${document.getElementById('num_mda').value}</span>
+    <span class="mk">Opérateur</span><span>${OPE}</span>
+    <span class="mk">Immatriculation</span><span>${document.getElementById('immat').value}</span>
+    <span class="mk">Marque / Modèle</span><span>${document.getElementById('marque').value} ${document.getElementById('modele').value}</span>
+    <span class="mk">VIN</span><span>${document.getElementById('vin').value}</span>
+  </div>
+  <div class="addrs">
+    <div><div class="albl">${SOC.n1} — ${SOC.n2}</div>${SOC.adr}, ${SOC.cp}<br>Tél : ${SOC.tel} · ${SOC.email}<br>SIRET : ${SOC.siret} · TVA : ${SOC.tva}</div>
+    <div><div class="albl">Devis pour</div>${document.getElementById('cnom').value}<br>${document.getElementById('cadr').value}<br>${document.getElementById('ccp').value} ${document.getElementById('cvil').value}<br>Tél : ${document.getElementById('ctel').value}<br>${document.getElementById('ceml').value}</div>
+  </div>
+  <table><thead><tr><th style="text-align:left;width:40%">Description</th><th>P.U.HT</th><th>Qté</th><th>TVA</th><th>Montant HT</th></tr></thead><tbody>${lsHTML}</tbody></table>
+  <div class="foot"><table class="ft">
+    <tr><td style="color:#888">Montant TVA</td><td style="text-align:right">${tTVA.toFixed(2)} €</td></tr>
+    <tr><td style="color:#888">Total HT</td><td style="text-align:right">${tHT.toFixed(2)} €</td></tr>
+    <tr><td style="color:#888">Total TVA</td><td style="text-align:right">${tTVA.toFixed(2)} €</td></tr>
+    <tr class="ttc"><td>Total TTC</td><td style="text-align:right">${tTTC.toFixed(2)} €</td></tr>
+  </table></div>
+  <script>window.onload=()=>window.print()<\/script></body></html>`;
+  const blob=new Blob([html],{type:'text/html'});
+  window.open(URL.createObjectURL(blob),'_blank');
+}
+
+ap('pb');ap('kit');ap('mo');calc();
+</script>
+</body>
+</html>
