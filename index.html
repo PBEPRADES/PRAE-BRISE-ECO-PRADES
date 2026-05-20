@@ -221,6 +221,7 @@ html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:-a
         <div class="field"><label>Main d'œuvre</label><input id="c_mo" placeholder="0.00" inputmode="decimal" oninput="calc()"/></div>
         <div class="field"><label>ADAS / sous-trait.</label><input id="c_adas" placeholder="0.00" inputmode="decimal" oninput="calc()"/></div>
         <div class="field"><label>Rachat client (€)</label><input id="c_rachat" placeholder="250.00" inputmode="decimal" oninput="calc()"/></div>
+        <div class="field"><label>Franchise client (€)</label><input id="c_franchise" placeholder="0.00" inputmode="decimal" oninput="calc()"/></div>
       </div>
     </div>
   </div>
@@ -344,8 +345,8 @@ function calc(){
     <div class="tot-row"><span class="lbl">TVA (20%)</span><span>${fmt(tTVA)}</span></div>
     <div class="tot-main"><span>Total TTC</span><span>${fmt(tTTC)}</span></div>`;
 
-  const cV=gv('c_verre'),cK=gv('c_kit'),cP=gv('c_pieces'),cM=gv('c_mo'),cA=gv('c_adas'),cR=gv('c_rachat');
-  const totA=parseFloat((cV+cK+cP+cM+cA+cR).toFixed(2));
+  const cV=gv('c_verre'),cK=gv('c_kit'),cP=gv('c_pieces'),cM=gv('c_mo'),cA=gv('c_adas'),cR=gv('c_rachat'),cF=gv('c_franchise');
+  const totA=parseFloat((cV+cK+cP+cM+cA+cR+cF).toFixed(2));
   const delta=parseFloat((tHT-totA).toFixed(2));
   const taux=tHT>0?Math.round(delta/tHT*100):0;
 
